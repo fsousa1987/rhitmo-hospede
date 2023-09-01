@@ -35,7 +35,7 @@ public class GuestController {
         return ResponseEntity.ok(guestsReservation);
     }
 
-    @PatchMapping(path = "/update/phone", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/update/phone", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<HttpStatus> updateGuestPhoneNumber(@Valid @RequestBody GuestPhoneNumberRequest guestNumberRequest) {
         guestService.updateGuestNumber(guestNumberRequest);
         return ResponseEntity.noContent().build();
