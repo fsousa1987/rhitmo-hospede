@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tb_reservation")
 @Entity
 public class Reservation implements Serializable {
 

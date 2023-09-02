@@ -3,13 +3,18 @@ spring:
     name: rhitmo-hospede
   datasource:
     username: 'user'
-    url: jdbc:mysql://localhost:3306/rhitmo-hospede
+    url: jdbc:mysql://localhost:3306/rhitmo_hospede
     password: 'password'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
   jpa:
     properties:
       hibernate:
         format_sql: 'true'
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: 'false'
     open-in-view: false
+    defer-datasource-initialization: true

@@ -1,9 +1,10 @@
 services:
-  db:
+  mysql:
+    container_name: mysql
     image: mysql
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: 'rhitmo-hospede'
+      MYSQL_DATABASE: 'rhitmo_hospede'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
@@ -12,6 +13,12 @@ services:
     expose:
       - '3306'
     volumes:
-      - my-db:/var/lib/mysql
+      - mysql:/data/mysql
+    networks:
+      - mysql
+
+networks:
+  mysql:
+    driver: bridge
 volumes:
-  my-db:
+  mysql:

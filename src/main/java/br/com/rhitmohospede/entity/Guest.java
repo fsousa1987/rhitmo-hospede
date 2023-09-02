@@ -12,10 +12,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tb_guest")
+@Entity
 public class Guest implements Serializable {
 
     @Serial
