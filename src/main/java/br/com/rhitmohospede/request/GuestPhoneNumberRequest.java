@@ -1,9 +1,11 @@
 package br.com.rhitmohospede.request;
 
+import br.com.rhitmohospede.validator.Phone;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.springframework.format.annotation.NumberFormat;
+
+import static br.com.rhitmohospede.validator.EmailRegexValidator.emailRegex;
 
 @Data
 @Builder
@@ -13,9 +15,9 @@ import org.springframework.format.annotation.NumberFormat;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GuestPhoneNumberRequest {
 
-    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Email(message = "Email is not valid", regexp = emailRegex)
     private String email;
 
-    @NumberFormat(style = NumberFormat.Style.NUMBER, pattern = "(99)99999-9999")
+    @Phone(message = "Phone is not valid")
     private String cellPhone;
 }

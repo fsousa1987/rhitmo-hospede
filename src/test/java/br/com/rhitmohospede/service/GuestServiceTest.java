@@ -16,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static br.com.rhitmohospede.exception.enums.ErrorMessages.*;
+import static br.com.rhitmohospede.exception.enums.ProblemType.*;
 import static br.com.rhitmohospede.factory.Factory.*;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;

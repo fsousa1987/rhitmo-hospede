@@ -29,8 +29,8 @@ public class GuestController {
         return ResponseEntity.ok(guests);
     }
 
-    @GetMapping(path = "/reservations", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<GuestReservationResponse> getAllReservationsByGuest(@Valid GuestReservationRequest guestReservationRequest) {
+    @GetMapping(path = "/reservations", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<GuestReservationResponse> getAllReservationsByGuest(@Valid @RequestBody GuestReservationRequest guestReservationRequest) {
         var guestsReservation = guestService.getAllReservationsByGuest(guestReservationRequest);
         return ResponseEntity.ok(guestsReservation);
     }
