@@ -7,12 +7,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
-public class CustomDateValidator implements ConstraintValidator<CustomDateConstraint, LocalDate> {
+public class CustomDateValidator implements ConstraintValidator<Date, LocalDate> {
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     @Override
-    public void initialize(CustomDateConstraint customDate) {
+    public void initialize(Date customDate) {
         ConstraintValidator.super.initialize(customDate);
     }
 

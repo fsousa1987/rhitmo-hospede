@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface GuestService {
 
-    List<GuestResponse> getAllGuest();
-    GuestReservationResponse getAllReservationByGuest(GuestReservationRequest guestReservationRequest);
+    List<GuestResponse> getAllGuests();
+    GuestReservationResponse getAllReservationsByGuest(GuestReservationRequest guestReservationRequest);
     GuestResponse createGuest(RegistrationGuestRequest registrationGuestRequest);
     void updateGuestNumber(GuestPhoneNumberRequest guestNumberRequest);
 }

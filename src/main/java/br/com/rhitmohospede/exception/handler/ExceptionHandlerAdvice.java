@@ -83,13 +83,6 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
-    private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, String detail) {
-        return Problem.builder()
-                .timestamp(OffsetDateTime.now())
-                .status(status.value())
-                .detail(detail);
-    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex,
                                                                   @NonNull HttpHeaders headers,
@@ -137,5 +130,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, String detail) {
+        return Problem.builder()
+                .timestamp(OffsetDateTime.now())
+                .status(status.value())
+                .detail(detail);
     }
 }

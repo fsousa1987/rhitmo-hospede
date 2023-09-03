@@ -42,6 +42,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationResponse> getAllReservationsByDate(LocalDate dataInicial, LocalDate dataFinal) {
+
         List<Reservation> reservationList = reservationRepository.findAllByReservationDateBetween(dataInicial, dataFinal);
         if (reservationList.isEmpty()) {
             throw new BusinessException("No reservations found with these parameters");

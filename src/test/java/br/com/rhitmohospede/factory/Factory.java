@@ -1,5 +1,8 @@
 package br.com.rhitmohospede.factory;
 
+import br.com.rhitmohospede.entity.Guest;
+import br.com.rhitmohospede.entity.Reservation;
+import br.com.rhitmohospede.entity.Room;
 import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.request.*;
 import br.com.rhitmohospede.response.GuestReservationResponse;
@@ -98,6 +101,42 @@ public class Factory {
     public static UpdateRoomRequest createUpdateRoomRequest() {
         return UpdateRoomRequest.builder()
                 .number(323)
+                .build();
+    }
+
+    public static Guest createGuest() {
+        return Guest.builder()
+                .phone("(99) 99999-9999")
+                .name("John Doe")
+                .email("test@test.com.br")
+                .reservations(null)
+                .build();
+    }
+
+    public static Reservation createReservation() {
+        return Reservation.builder()
+                .id(1L)
+                .code("441")
+                .daysReserved(3)
+                .dataCheckin(LocalDate.now())
+                .dataCheckout(LocalDate.now().plusDays(3))
+                .guest(null)
+                .roomReserved(335)
+                .reservationDate(LocalDate.now())
+                .room(createRoom())
+                .status(Status.AVAILABLE)
+                .totalValue(BigDecimal.TEN)
+                .build();
+    }
+
+    public static Room createRoom() {
+        return Room.builder()
+                .dailyValue(BigDecimal.TEN)
+                .description("Nice Room")
+                .guests(2)
+                .id(1L)
+                .status(Status.AVAILABLE)
+                .number(332)
                 .build();
     }
 }

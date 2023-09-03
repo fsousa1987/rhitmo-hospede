@@ -38,7 +38,7 @@ public class GuestControllerTest {
     public void listAllGuestsTest() throws Exception {
         var guests = createGuestResponse();
 
-        given(service.getAllGuest()).willReturn(List.of(guests));
+        given(service.getAllGuests()).willReturn(List.of(guests));
 
         var request = MockMvcRequestBuilders
                 .get(GUEST_URI)
@@ -63,7 +63,7 @@ public class GuestControllerTest {
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON);
 
-        given(service.getAllReservationByGuest(requestGuestReservation)).willReturn(response);
+        given(service.getAllReservationsByGuest(requestGuestReservation)).willReturn(response);
 
         mvc.perform(request)
                 .andExpect(status().isOk())

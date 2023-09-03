@@ -1,6 +1,6 @@
 package br.com.rhitmohospede.request;
 
-import br.com.rhitmohospede.validator.CustomDateConstraint;
+import br.com.rhitmohospede.validator.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -17,7 +17,7 @@ public class CreateReservationRequest {
 
     private int numberRoom;
 
-    @CustomDateConstraint(message = "Invalid")
+    @Date(message = "Invalid date, try yyyy-MM-dd")
     private LocalDate reservationDate;
 
     private Long numberDaysReserved;

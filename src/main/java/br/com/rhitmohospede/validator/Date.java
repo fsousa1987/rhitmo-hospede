@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = CustomDateValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CustomDateConstraint {
+public @interface Date {
     String message() default "Invalid date format";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

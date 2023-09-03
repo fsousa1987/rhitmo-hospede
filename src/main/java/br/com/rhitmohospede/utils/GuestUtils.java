@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GuestUtils {
 
-    public static List<GuestResponse> makeListGuestDTO(List<Guest> guests) {
+    public static List<GuestResponse> makeListGuestToListGuestResponse(List<Guest> guests) {
         List<GuestResponse> guestResponses = new ArrayList<>();
 
         guests.forEach(guest -> guestResponses.add(
@@ -20,8 +20,7 @@ public class GuestUtils {
                         .name(guest.getName())
                         .phone(guest.getPhone())
                         .email(guest.getEmail())
-                        .build()
-        ));
+                        .build()));
 
         return guestResponses;
     }

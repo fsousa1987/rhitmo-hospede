@@ -1,4 +1,4 @@
-package br.com.rhitmohospede.enums;
+package br.com.rhitmohospede.exception.enums;
 
 public enum ErrorMessages {
 

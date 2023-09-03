@@ -25,13 +25,13 @@ public class GuestController {
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GuestResponse>> getAllGuests() {
-        var guests = guestService.getAllGuest();
+        var guests = guestService.getAllGuests();
         return ResponseEntity.ok(guests);
     }
 
     @GetMapping(path = "/reservations", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<GuestReservationResponse> getAllReservationsByGuest(@Valid GuestReservationRequest guestReservationRequest) {
-        var guestsReservation = guestService.getAllReservationByGuest(guestReservationRequest);
+        var guestsReservation = guestService.getAllReservationsByGuest(guestReservationRequest);
         return ResponseEntity.ok(guestsReservation);
     }
 
