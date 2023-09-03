@@ -1,10 +1,8 @@
-create table tb_guest
+CREATE TABLE tb_guest
 (
-    id    bigint       not null auto_increment,
-    nome  varchar(60)  not null,
-    email varchar(120) not null,
-    phone varchar(10)  not null,
-
-    primary key (id)
+    id    INT AUTO_INCREMENT PRIMARY KEY,
+    name  VARCHAR(255) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    phone VARCHAR(14)
 ) engine = InnoDB
   default charset = utf8;

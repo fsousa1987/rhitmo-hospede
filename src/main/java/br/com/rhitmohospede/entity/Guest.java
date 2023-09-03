@@ -38,6 +38,6 @@ public class Guest implements Serializable {
     @NumberFormat(style = NumberFormat.Style.NUMBER, pattern = "(99)99999-9999")
     private String phone;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "guest")
     private List<Reservation> reservations;
 }

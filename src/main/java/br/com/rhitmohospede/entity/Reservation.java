@@ -65,6 +65,6 @@ public class Reservation implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Guest guest;
 }
