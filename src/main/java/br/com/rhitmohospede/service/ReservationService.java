@@ -11,7 +11,7 @@ public interface ReservationService {
 
     List<ReservationResponse> getAllReservationsByStatus(String status);
 
-    List<ReservationResponse> getAllReservationsByDate(LocalDate dataInicial, LocalDate dataFinal);
+    List<ReservationResponse> getAllReservationsByDate(String initialDate, String finalDate);
 
     ReservationResponse createReservation(CreateReservationRequest createReservationRequest);
 

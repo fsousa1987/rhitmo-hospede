@@ -18,20 +18,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/reservation/status")
+@RequestMapping("/api/v1/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping(path = "/{status}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "status") String status) {
-        var reservationsByStatus = reservationService.getAllReservationsByStatus(status);
+    @GetMapping(path = "status/{reservationStatus}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "reservationStatus") String reservationStatus) {
+        var reservationsByStatus = reservationService.getAllReservationsByStatus(reservationStatus);
         return ResponseEntity.ok(reservationsByStatus);
     }
 
     @GetMapping(path = "/search/date", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam LocalDate initialDate, @RequestParam LocalDate finalDate) {
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam String initialDate, @RequestParam String finalDate) {
         var reservationsByData = reservationService.getAllReservationsByDate(initialDate, finalDate);
         return ResponseEntity.ok(reservationsByData);
     }

@@ -6,6 +6,7 @@ import br.com.rhitmohospede.entity.Room;
 import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.exception.BusinessException;
 import br.com.rhitmohospede.exception.IntegrationException;
+import br.com.rhitmohospede.exception.InvalidParamException;
 import br.com.rhitmohospede.exception.InvalidStatusException;
 import br.com.rhitmohospede.repository.GuestRepository;
 import br.com.rhitmohospede.repository.ReservationRepository;
@@ -18,10 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static br.com.rhitmohospede.utils.ReservationUtils.*;
 
@@ -47,11 +48,25 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<ReservationResponse> getAllReservationsByDate(LocalDate dataInicial, LocalDate dataFinal) {
+    public List<ReservationResponse> getAllReservationsByDate(String initialDate, String finalDate) {
+        Map<String, String> dates = new HashMap<>();
+        dates.put("initialDate", initialDate);
+        dates.put("finalDate", finalDate);
 
-        List<Reservation> reservationList = reservationRepository.findAllByReservationDateBetween(dataInicial, dataFinal);
+        validateDatesProvided(dates);
+
+        LocalDate initialDateParam = LocalDate.parse(initialDate);
+        LocalDate finalDateParam = LocalDate.parse(finalDate);
+
+        if (initialDateParam.isAfter(finalDateParam) || finalDateParam.isBefore(initialDateParam)) {
+            throw new InvalidParamException(String.format("Divergence between dates: initialDate: %s and finalDate: %s",
+                    initialDate, finalDate));
+        }
+
+        List<Reservation> reservationList = reservationRepository.findAllByReservationDateBetween(initialDateParam, finalDateParam);
+
         if (reservationList.isEmpty()) {
-            throw new BusinessException("No reservations found with these parameters");
+            return Collections.emptyList();
         }
 
         return makeReservationListResponse(reservationList);
@@ -134,6 +149,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private boolean isStatusProvidedValid(String upperCaseStatus) {
-        return Arrays.stream(Status.values()).anyMatch(n -> n.toString().equals(upperCaseStatus));
+        return Arrays.stream(Status.values()).anyMatch(status -> status.toString().equals(upperCaseStatus));
+    }
+
+    private void validateDatesProvided(Map<String, String> dateMap) {
+        String datePattern = "yyyy-MM-dd";
+
+        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+
+        dateMap.forEach((key, value) -> {
+            try {
+                sdf.setLenient(false);
+                sdf.parse(value);
+            } catch (ParseException e) {
+                throw new InvalidParamException("Invalid date param provided");
+            }
+        });
     }
 }

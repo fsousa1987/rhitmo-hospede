@@ -2,6 +2,7 @@ package br.com.rhitmohospede.exception.handler;
 
 import br.com.rhitmohospede.exception.BusinessException;
 import br.com.rhitmohospede.exception.GuestNotFoundException;
+import br.com.rhitmohospede.exception.InvalidParamException;
 import br.com.rhitmohospede.exception.InvalidStatusException;
 import br.com.rhitmohospede.exception.enums.ProblemType;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.BUSINESS_ERROR;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(InvalidParamException.class)
+    public ResponseEntity<?> handleInvalidParamException(InvalidParamException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.INVALID_PARAM;
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();

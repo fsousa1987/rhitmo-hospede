@@ -8,7 +8,8 @@ public enum ProblemType {
     RESOURCE_NOT_FOUND("Resource not found"),
     INVALID_STATUS_PROVIDED("Invalid status provided"),
     INVALID_DATA("Invalid data"),
-    BUSINESS_ERROR("Business rule violation");
+    BUSINESS_ERROR("Business rule violation"),
+    INVALID_PARAM("Invalid param");
 
     private final String title;
 
