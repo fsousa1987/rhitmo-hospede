@@ -85,6 +85,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(RoomAlreadyRegisteredException.class)
+    public ResponseEntity<?> handleRoomAlreadyRegisteredException(RoomAlreadyRegisteredException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.ROOM_ALREADY_REGISTERED;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<?> handleRoomNotFoundException(RoomNotFoundException ex, WebRequest request) {
 
@@ -102,6 +114,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(IntegrationException.class)
+    public ResponseEntity<?> handleIntegrationException(IntegrationException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.CONFLICT;
+        ProblemType problemType = ProblemType.BUSINESS_ERROR;
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();

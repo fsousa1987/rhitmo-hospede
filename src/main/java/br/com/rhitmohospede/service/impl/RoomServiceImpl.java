@@ -1,6 +1,5 @@
 package br.com.rhitmohospede.service.impl;
 
-import br.com.rhitmohospede.entity.Reservation;
 import br.com.rhitmohospede.entity.Room;
 import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.exception.IntegrationException;
@@ -13,14 +12,15 @@ import br.com.rhitmohospede.request.CreateRoomRequest;
 import br.com.rhitmohospede.request.UpdateRoomRequest;
 import br.com.rhitmohospede.response.RoomResponse;
 import br.com.rhitmohospede.service.RoomService;
-import br.com.rhitmohospede.utils.RoomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+import static br.com.rhitmohospede.utils.RoomUtils.makeListToRoomResponse;
+import static br.com.rhitmohospede.utils.RoomUtils.makeRoomResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -30,42 +30,39 @@ public class RoomServiceImpl implements RoomService {
     private final ReservationRepository reservationRepository;
 
     @Override
-    public List<RoomResponse> findAllRoomByStatus(Status status, LocalDate initialDate, LocalDate finalDate) {
+    public List<RoomResponse> findAllRoomByStatus(Status status) {
+        var rooms = roomRepository.findRoomsByStatus(status);
 
-        List<Room> rooms = reservationRepository.findAllRoomByStatus(status.toString(), initialDate, finalDate);
         if (rooms.isEmpty()) {
-            throw new RoomNotFoundException("Room not found!");
+            return Collections.emptyList();
         }
-        return RoomUtils.makeListToRoomResponse(rooms);
+        return makeListToRoomResponse(rooms);
     }
 
     @Transactional
     @Override
     public RoomResponse createRoom(CreateRoomRequest request) {
-        Room room;
         Room savedRoom;
-        Optional<Room> roomOptional = roomRepository.findByNumber(request.getNumber());
+        var roomOptional = roomRepository.findByNumber(request.getNumber());
         if (roomOptional.isPresent()) {
-            throw new RoomAlreadyRegisteredException("Room already registered!");
-        } else {
-            room = new Room();
-            room.setNumber(request.getNumber());
-            room.setGuests(request.getGuests());
-            room.setDescription(request.getDescription());
-            room.setDailyValue(request.getValue());
-            room.setStatus(Status.AVAILABLE);
-            try {
-                savedRoom = roomRepository.save(room);
-            } catch (UnknownException e) {
-                throw new UnknownException("Unknown error when trying to save room");
-            }
+            throw new RoomAlreadyRegisteredException("There is already a room with these settings");
         }
-        return RoomUtils.makeRoomResponse(savedRoom);
+        Room room = Room.builder()
+                .number(request.getNumber())
+                .guests(request.getGuests())
+                .description(request.getDescription())
+                .dailyValue(request.getValue())
+                .status(Status.AVAILABLE)
+                .build();
+
+        savedRoom = roomRepository.save(room);
+        return makeRoomResponse(savedRoom);
     }
 
     @Override
+    @Transactional
     public void updateRoom(UpdateRoomRequest updateRoomRequest) {
-        Optional<Room> roomOptional = roomRepository.findByNumber(updateRoomRequest.getNumber());
+        var roomOptional = roomRepository.findByNumber(updateRoomRequest.getNumber());
         if (roomOptional.isPresent()) {
             Room room = roomOptional.get();
             room.setGuests(updateRoomRequest.getGuests());
@@ -83,21 +80,22 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void deleteRoom(int roomNumber) {
-        List<Reservation> reservationList = reservationRepository.findAllByRoomReserved(roomNumber);
+        var reservationList = reservationRepository.findAllByRoomReserved(roomNumber);
 
         if (!reservationList.isEmpty()) {
             throw new IntegrationException("You cannot delete a room with a registered reservation.");
-        } else {
-            Optional<Room> optionalRoom = roomRepository.findByNumber(roomNumber);
-            if (optionalRoom.isPresent()) {
-                try {
-                    roomRepository.delete(optionalRoom.get());
-                } catch (UnknownException e) {
-                    throw new UnknownException("Unknown error when trying to save room");
-                }
-            } else {
-                throw new RoomNotFoundException("Room not found!");
-            }
         }
+
+        var optionalRoom = roomRepository.findByNumber(roomNumber);
+        if (optionalRoom.isPresent()) {
+            try {
+                roomRepository.delete(optionalRoom.get());
+            } catch (UnknownException e) {
+                throw new UnknownException("Unknown error when trying to save room");
+            }
+        } else {
+            throw new RoomNotFoundException("Room not found!");
+        }
+
     }
 }

@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
+import static br.com.rhitmohospede.service.utils.Validators.*;
 import static br.com.rhitmohospede.utils.ReservationUtils.*;
 
 @Service
@@ -34,20 +34,17 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationResponse> getAllReservationsByStatus(String status) {
         var upperCaseStatus = transformLowerCaseToUpperCase(status);
-        boolean isValidStatus = isStatusProvidedValid(upperCaseStatus);
+        isStatusProvidedValid(upperCaseStatus);
 
-        if (isValidStatus) {
-            var reservationList = reservationRepository.findAllByStatus(Status.valueOf(upperCaseStatus));
-            return makeReservationListResponse(reservationList);
-        }
+        var reservationList = reservationRepository.findAllByStatus(Status.valueOf(upperCaseStatus));
+        return makeReservationListResponse(reservationList);
 
-        throw new InvalidStatusException(String.format("Status %s is not valid", status));
     }
 
     @Override
     public List<ReservationResponse> getAllReservationsByDate(String initialDate, String finalDate) {
         var dates = createMapOfDates(initialDate, finalDate);
-        iterateToMapDateValues(dates);
+        verifyMapHasValidDates(dates);
 
         LocalDate initialDateParam = LocalDate.parse(initialDate);
         LocalDate finalDateParam = LocalDate.parse(finalDate);
@@ -148,34 +145,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     private String transformLowerCaseToUpperCase(String status) {
         return status.toUpperCase();
-    }
-
-    private boolean isStatusProvidedValid(String upperCaseStatus) {
-        return Arrays.stream(Status.values()).anyMatch(status -> status.toString().equals(upperCaseStatus));
-    }
-
-    private void validateDateProvided(String dateValue) {
-        String datePattern = "yyyy-MM-dd";
-
-        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
-
-        try {
-            sdf.setLenient(false);
-            sdf.parse(dateValue);
-        } catch (ParseException e) {
-            throw new InvalidDateException("Invalid date param or date field provided");
-        }
-    }
-
-    private Map<String, String> createMapOfDates(String initialDate, String finalDate) {
-        Map<String, String> dates = new HashMap<>();
-        dates.put("initialDate", initialDate);
-        dates.put("finalDate", finalDate);
-        return dates;
-    }
-
-    private void iterateToMapDateValues(Map<String, String> dates) {
-        dates.forEach((key, value) -> validateDateProvided(value));
     }
 
     private Guest findGuestByEmail(String email) {
