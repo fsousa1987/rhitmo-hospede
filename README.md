@@ -16,6 +16,7 @@ Já existe dentro do projeto um arquivo exportado do Postman. O arquivo se encon
 - Docker
 - Flyway
 - MySQL
+  
 Foram usados tecnologias mais recentes no projeto.
 # observação
 Foi feito alguns testes unitários na aplicação, ela não está 100% coberta.
