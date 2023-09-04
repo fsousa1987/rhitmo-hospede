@@ -5,9 +5,8 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
-public class CustomDateValidator implements ConstraintValidator<Date, LocalDate> {
+public class CustomDateValidator implements ConstraintValidator<Date, String> {
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
@@ -17,7 +16,7 @@ public class CustomDateValidator implements ConstraintValidator<Date, LocalDate>
     }
 
     @Override
-    public boolean isValid(LocalDate customDateField, ConstraintValidatorContext ctx) {
+    public boolean isValid(String customDateField, ConstraintValidatorContext ctx) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         try {
             sdf.setLenient(false);

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,7 +31,7 @@ public class ReservationController {
     }
 
     @GetMapping(path = "/search/date", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam String initialDate, @RequestParam String finalDate) {
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam LocalDate initialDate, @RequestParam LocalDate finalDate) {
         var reservationsByData = reservationService.getAllReservationsByDate(initialDate, finalDate);
         return ResponseEntity.ok(reservationsByData);
     }

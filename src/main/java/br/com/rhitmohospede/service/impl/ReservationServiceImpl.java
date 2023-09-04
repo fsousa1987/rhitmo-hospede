@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static br.com.rhitmohospede.service.utils.Validators.*;
+import static br.com.rhitmohospede.service.utils.Validators.isStatusProvidedValid;
 import static br.com.rhitmohospede.utils.ReservationUtils.*;
 
 @Service
@@ -42,19 +42,14 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<ReservationResponse> getAllReservationsByDate(String initialDate, String finalDate) {
-        var dates = createMapOfDates(initialDate, finalDate);
-        verifyMapHasValidDates(dates);
+    public List<ReservationResponse> getAllReservationsByDate(LocalDate initialDate, LocalDate finalDate) {
 
-        LocalDate initialDateParam = LocalDate.parse(initialDate);
-        LocalDate finalDateParam = LocalDate.parse(finalDate);
-
-        if (initialDateParam.isAfter(finalDateParam) || finalDateParam.isBefore(initialDateParam)) {
+        if (initialDate.isAfter(finalDate) || finalDate.isBefore(initialDate)) {
             throw new InvalidDateException(String.format("Divergence between dates: initialDate: %s and finalDate: %s",
                     initialDate, finalDate));
         }
 
-        List<Reservation> reservationList = reservationRepository.findAllByReservationDateBetween(initialDateParam, finalDateParam);
+        var reservationList = reservationRepository.findAllByReservationDateBetween(initialDate, finalDate);
 
         if (reservationList.isEmpty()) {
             return Collections.emptyList();
@@ -66,7 +61,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public ReservationResponse createReservation(CreateReservationRequest createReservationRequest) {
-        validateDateProvided(createReservationRequest.getReservationDate());
+
         LocalDate reservationDate = LocalDate.parse(createReservationRequest.getReservationDate());
 
         var guest = findGuestByEmail(createReservationRequest.getEmail());

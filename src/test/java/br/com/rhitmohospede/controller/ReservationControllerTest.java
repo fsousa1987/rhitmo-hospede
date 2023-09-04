@@ -14,6 +14,7 @@ import java.util.List;
 
 import static br.com.rhitmohospede.factory.Factory.*;
 import static br.com.rhitmohospede.util.JsonResponse.asJsonString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -61,7 +62,7 @@ public class ReservationControllerTest {
     public void getAllReservationsByDate() throws Exception {
         var reservationResponse = createReservationResponse();
 
-        given(service.getAllReservationsByDate(LocalDate.now().toString(), LocalDate.now().plusDays(3).toString()))
+        given(service.getAllReservationsByDate(any(LocalDate.class), any(LocalDate.class)))
                 .willReturn(List.of(reservationResponse));
 
         var request = MockMvcRequestBuilders

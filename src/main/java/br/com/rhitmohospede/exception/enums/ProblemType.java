@@ -10,7 +10,9 @@ public enum ProblemType {
     INVALID_DATA("Invalid data"),
     BUSINESS_ERROR("Business rule violation"),
     INVALID_DATE("Invalid date"),
-    ROOM_ALREADY_REGISTERED("Room already registered");
+    ROOM_ALREADY_REGISTERED("Room already registered"),
+    INCOMPREHENSIBLE_MESSAGE("Incomprehensible message"),
+    INVALID_PARAMETER("Invalid parameter");
 
     private final String title;
 
