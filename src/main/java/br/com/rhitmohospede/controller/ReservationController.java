@@ -1,6 +1,5 @@
 package br.com.rhitmohospede.controller;
 
-import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.request.CreateReservationRequest;
 import br.com.rhitmohospede.request.PaymentRequest;
 import br.com.rhitmohospede.response.ReservationResponse;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -25,14 +23,14 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping(path = "/{status}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "status") Status status) {
-        var reservationsByStatus = reservationService.getAllReservationsByStatus(status);
+    @GetMapping(path = "status/{reservationStatus}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "reservationStatus") String reservationStatus) {
+        var reservationsByStatus = reservationService.getAllReservationsByStatus(reservationStatus);
         return ResponseEntity.ok(reservationsByStatus);
     }
 
     @GetMapping(path = "/search/date", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam LocalDate initialDate, @RequestParam LocalDate finalDate) {
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByDate(@RequestParam String initialDate, @RequestParam String finalDate) {
         var reservationsByData = reservationService.getAllReservationsByDate(initialDate, finalDate);
         return ResponseEntity.ok(reservationsByData);
     }

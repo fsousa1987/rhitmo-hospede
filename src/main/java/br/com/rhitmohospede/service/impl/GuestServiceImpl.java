@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static br.com.rhitmohospede.exception.enums.ErrorMessages.*;
 import static br.com.rhitmohospede.utils.GuestUtils.makeListGuestToListGuestResponse;
 import static br.com.rhitmohospede.utils.ReservationUtils.makeReservationListResponse;
+import static java.util.Collections.emptyList;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +32,16 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public List<GuestResponse> getAllGuests() {
         var guestList = guestRepository.findAll();
+
         if (guestList.isEmpty()) {
-            throw new GuestNotFoundException(NO_GUEST_FOUND_MESSAGE.toString());
+            return emptyList();
         }
+
         return makeListGuestToListGuestResponse(guestList);
     }
 
     @Override
+    @Transactional
     public GuestReservationResponse getAllReservationsByGuest(GuestReservationRequest guestReservationRequest) {
         var guestOptional = guestRepository.findByEmail(guestReservationRequest.getEmail());
         if (guestOptional.isPresent()) {
@@ -49,7 +52,7 @@ public class GuestServiceImpl implements GuestService {
                     .reservationList(makeReservationListResponse(guest.getReservations()))
                     .build();
         } else {
-            throw new GuestNotFoundException(NO_GUEST_FOUND_MESSAGE.toString());
+            throw new GuestNotFoundException("Guest not found in database");
         }
     }
 
@@ -66,7 +69,7 @@ public class GuestServiceImpl implements GuestService {
                     .build());
             return GuestUtils.makeGuestResponse(guest);
         }
-        throw new BusinessException(GUEST_ALREADY_REGISTERED_MESSAGE.toString());
+        throw new BusinessException("Guest already registered");
     }
 
     @Override
@@ -79,7 +82,7 @@ public class GuestServiceImpl implements GuestService {
             guest.setPhone(guestNumberRequest.getCellPhone());
             guestRepository.save(guest);
         } else {
-            throw new BusinessException(GUEST_NOT_FOUND.toString());
+            throw new GuestNotFoundException("Guest not found in database");
         }
     }
 }

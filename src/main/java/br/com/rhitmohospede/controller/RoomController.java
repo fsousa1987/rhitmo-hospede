@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -24,14 +23,14 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping(path = "/available", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<RoomResponse>> findAllRoomsByStatusAvailable(@RequestParam LocalDate initialDate, @RequestParam LocalDate finalDate) {
-        var responseList = roomService.findAllRoomByStatus(Status.AVAILABLE, initialDate, finalDate);
+    public ResponseEntity<List<RoomResponse>> findAllRoomsByStatusAvailable() {
+        var responseList = roomService.findAllRoomByStatus(Status.AVAILABLE);
         return ResponseEntity.ok(responseList);
     }
 
     @GetMapping(path = "/reserved", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<RoomResponse>> findAllRoomsByStatusReserved(@RequestParam LocalDate initialDate, @RequestParam LocalDate finalDate) {
-        var responseList = roomService.findAllRoomByStatus(Status.RESERVED, initialDate, finalDate);
+    public ResponseEntity<List<RoomResponse>> findAllRoomsByStatusReserved() {
+        var responseList = roomService.findAllRoomByStatus(Status.RESERVED);
         return ResponseEntity.ok(responseList);
     }
 
@@ -42,7 +41,7 @@ public class RoomController {
     }
 
     @PatchMapping(path = "/update", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> updateRoom(@RequestBody UpdateRoomRequest updateRoomRequest) {
+    public ResponseEntity<HttpStatus> updateRoom(@RequestBody @Valid UpdateRoomRequest updateRoomRequest) {
         roomService.updateRoom(updateRoomRequest);
         return ResponseEntity.noContent().build();
     }

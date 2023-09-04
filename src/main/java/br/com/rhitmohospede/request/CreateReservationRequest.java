@@ -1,11 +1,13 @@
 package br.com.rhitmohospede.request;
 
-import br.com.rhitmohospede.validator.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+
+import static br.com.rhitmohospede.validator.EmailRegexValidator.emailRegex;
 
 @Data
 @Builder
@@ -15,13 +17,15 @@ import java.time.LocalDate;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CreateReservationRequest {
 
-    private int numberRoom;
+    @NotNull(message = "must not be blank")
+    private Integer numberRoom;
 
-    @Date(message = "Invalid date, try yyyy-MM-dd")
-    private LocalDate reservationDate;
+    @NotNull(message = "must not be blank")
+    private String reservationDate;
 
+    @NotNull(message = "must not be blank")
     private Long numberDaysReserved;
 
-    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Email(message = "Email is not valid", regexp = emailRegex)
     private String email;
 }

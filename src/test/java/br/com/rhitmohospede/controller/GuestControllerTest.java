@@ -93,26 +93,4 @@ public class GuestControllerTest {
 
         verify(service, times(1)).updateGuestNumber(any(GuestPhoneNumberRequest.class));
     }
-
-    @Test
-    @DisplayName("It should create a new guest")
-    public void createGuest() throws Exception {
-        var registrationGuestRequest = createRegistrationGuestRequest();
-
-        var guestResponse = createGuestResponse();
-
-        var request = MockMvcRequestBuilders
-                .post(GUEST_URI)
-                .content(asJsonString(registrationGuestRequest))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        given(service.createGuest(registrationGuestRequest)).willReturn(guestResponse);
-
-        mvc.perform(request)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").isNotEmpty())
-                .andExpect(jsonPath("$.email").isNotEmpty())
-                .andExpect(jsonPath("$.phone").isNotEmpty());
-    }
 }

@@ -1,9 +1,12 @@
 package br.com.rhitmohospede.request;
 
+import br.com.rhitmohospede.validator.Phone;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
+import static br.com.rhitmohospede.validator.EmailRegexValidator.emailRegex;
 
 @Data
 @Builder
@@ -17,9 +20,10 @@ public class RegistrationGuestRequest {
     private String name;
 
     @NotBlank
-    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Email(message = "Email is not valid", regexp = emailRegex)
     private String email;
 
     @NotBlank
+    @Phone(message = "Phone is not valid")
     private String phone;
 }

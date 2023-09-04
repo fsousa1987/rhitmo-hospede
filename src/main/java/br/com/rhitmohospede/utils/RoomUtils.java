@@ -14,6 +14,7 @@ public class RoomUtils {
     public static List<RoomResponse> makeListToRoomResponse(List<Room> roomList) {
         List<RoomResponse> responseList = new ArrayList<>();
         roomList.forEach(room -> responseList.add(RoomResponse.builder()
+                .status(room.getStatus())
                 .roomNumber(room.getNumber())
                 .numberGuests(room.getGuests())
                 .description(room.getDescription())

@@ -1,8 +1,7 @@
 package br.com.rhitmohospede.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,13 +14,15 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UpdateRoomRequest {
 
-    private int number;
+    @NotNull(message = "enter a valid value")
+    private Integer number;
 
-    private int guests;
+    @NotNull(message = "enter a valid value")
+    private Integer guests;
 
-    @NotBlank
+    @NotNull(message = "enter a valid value")
     private String description;
 
-    @NotEmpty
+    @NotNull(message = "enter a valid value")
     private BigDecimal value;
 }
