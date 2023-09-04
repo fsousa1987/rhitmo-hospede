@@ -1,0 +1,374 @@
+{
+	"info": {
+		"_postman_id": "1b7a33c8-e174-443f-86a8-2570fd1d5bb2",
+		"name": "rhitmo-hospede",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26589872"
+	},
+	"item": [
+		{
+			"name": "Guest Controller",
+			"item": [
+				{
+					"name": "Get all guests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/guest",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"guest"
+							]
+						},
+						"description": "Get all guests from database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all reservations by guest",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"marina@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/guest/reservations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"guest",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update guest phone number",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"marina@gmail.com\",\n    \"cellPhone\": \"61 98444-4611\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/guest/update/phone",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"guest",
+								"update",
+								"phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new guest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Francisco Sousa\",\n    \"email\": \"franciscoeds1987@gmail.com\",\n    \"phone\": \"61 98444-4611\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/guest",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"guest"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservation Controller",
+			"item": [
+				{
+					"name": "Get all reservations by status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/reservation/status/reserved",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"reservation",
+								"status",
+								"reserved"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all reservations by date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/reservation/search/date?initialDate=2023-09-03&finalDate=2023-09-29",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"reservation",
+								"search",
+								"date"
+							],
+							"query": [
+								{
+									"key": "initialDate",
+									"value": "2023-09-03"
+								},
+								{
+									"key": "finalDate",
+									"value": "2023-09-29"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create reservation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numberRoom\": 356,\n    \"reservationDate\": \"2023-09-27\",\n    \"numberDaysReserved\": 4,\n    \"email\": \"mariana@hotmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/reservation",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"reservation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete reservation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/reservation/2fc93ddd-ba69-4c27-87f3-3cab3978d91a",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"reservation",
+								"2fc93ddd-ba69-4c27-87f3-3cab3978d91a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update reservation payment",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"0bad13fc-e6a2-4f38-8fe7-4f6b2afa5934\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/reservation/pay",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"reservation",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room Controller",
+			"item": [
+				{
+					"name": "Get all  available rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/api/v1/room/available",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"room",
+								"available"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create room",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": \"258\",\n    \"guests\": \"3\",\n    \"description\": \"Nice room\",\n    \"value\": 338.45\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/room",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update room",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": 222,\n    \"guests\": 3,\n    \"description\": \"OK room\",\n    \"value\": \"44859.35\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/room/update",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"room",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete room",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/room/258",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"room",
+								"258"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
