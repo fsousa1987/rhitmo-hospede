@@ -2,6 +2,7 @@ package br.com.rhitmohospede.exception.handler;
 
 import br.com.rhitmohospede.exception.BusinessException;
 import br.com.rhitmohospede.exception.GuestNotFoundException;
+import br.com.rhitmohospede.exception.InvalidStatusException;
 import br.com.rhitmohospede.exception.enums.ProblemType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -43,6 +44,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
         HttpStatus status = HttpStatus.NOT_FOUND;
         ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(InvalidStatusException.class)
+    public ResponseEntity<?> handleInvalidStatusException(InvalidStatusException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.INVALID_STATUS_PROVIDED;
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();

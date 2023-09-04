@@ -1,6 +1,5 @@
 package br.com.rhitmohospede.controller;
 
-import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.request.CreateReservationRequest;
 import br.com.rhitmohospede.request.PaymentRequest;
 import br.com.rhitmohospede.response.ReservationResponse;
@@ -19,14 +18,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/reservation")
+@RequestMapping("/api/v1/reservation/status")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
     @GetMapping(path = "/{status}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "status") Status status) {
+    public ResponseEntity<List<ReservationResponse>> getAllReservationsByStatus(@PathVariable(name = "status") String status) {
         var reservationsByStatus = reservationService.getAllReservationsByStatus(status);
         return ResponseEntity.ok(reservationsByStatus);
     }

@@ -6,6 +6,7 @@ import br.com.rhitmohospede.entity.Room;
 import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.exception.BusinessException;
 import br.com.rhitmohospede.exception.IntegrationException;
+import br.com.rhitmohospede.exception.InvalidStatusException;
 import br.com.rhitmohospede.repository.GuestRepository;
 import br.com.rhitmohospede.repository.ReservationRepository;
 import br.com.rhitmohospede.repository.RoomRepository;
@@ -13,14 +14,16 @@ import br.com.rhitmohospede.request.CreateReservationRequest;
 import br.com.rhitmohospede.request.PaymentRequest;
 import br.com.rhitmohospede.response.ReservationResponse;
 import br.com.rhitmohospede.service.ReservationService;
-import br.com.rhitmohospede.utils.ReservationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static br.com.rhitmohospede.utils.ReservationUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +34,16 @@ public class ReservationServiceImpl implements ReservationService {
     private final GuestRepository guestRepository;
 
     @Override
-    public List<ReservationResponse> getAllReservationsByStatus(Status status) {
-        List<Reservation> reservationList = reservationRepository.findAllByStatus(status);
-        if (reservationList.isEmpty()) {
-            throw new BusinessException("No reservations found with these parameters");
+    public List<ReservationResponse> getAllReservationsByStatus(String status) {
+        var upperCaseStatus = transformLowerCaseToUpperCase(status);
+        boolean isValidStatus = isStatusProvidedValid(upperCaseStatus);
+
+        if (isValidStatus) {
+            var reservationList = reservationRepository.findAllByStatus(Status.valueOf(upperCaseStatus));
+            return makeReservationListResponse(reservationList);
         }
 
-        return ReservationUtils.makeReservationListResponse(reservationList);
+        throw new InvalidStatusException(String.format("Status %s is not valid", status));
     }
 
     @Override
@@ -48,7 +54,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new BusinessException("No reservations found with these parameters");
         }
 
-        return ReservationUtils.makeReservationListResponse(reservationList);
+        return makeReservationListResponse(reservationList);
     }
 
     @Transactional
@@ -75,20 +81,20 @@ public class ReservationServiceImpl implements ReservationService {
             throw new BusinessException("No rooms found with these parameters");
         }
 
-        var reservationCode = ReservationUtils.gerarCodigo();
+        var reservationCode = gerarCodigo();
 
         Reservation reservation = new Reservation();
-        reservation.setCode(reservationRepository.existsByCode(reservationCode) ? ReservationUtils.gerarCodigo() : reservationCode);
+        reservation.setCode(reservationRepository.existsByCode(reservationCode) ? gerarCodigo() : reservationCode);
         reservation.setReservationDate(createReservationRequest.getReservationDate());
         reservation.setDataCheckin(createReservationRequest.getReservationDate());
         reservation.setDataCheckout(createReservationRequest.getReservationDate().plusDays(createReservationRequest.getNumberDaysReserved()));
         reservation.setRoomReserved(createReservationRequest.getNumberRoom());
         reservation.setStatus(Status.PRE_BOOKING);
         reservation.setGuest(optionalGuest.get());
-        reservation.setTotalValue(ReservationUtils.calculateTotalValue(optionalRoom.get(), createReservationRequest.getNumberDaysReserved()));
+        reservation.setTotalValue(calculateTotalValue(optionalRoom.get(), createReservationRequest.getNumberDaysReserved()));
         reservation.setRoom(optionalRoom.get());
         try {
-            return ReservationUtils.makeReservationResponse(reservationRepository.save(reservation));
+            return makeReservationResponse(reservationRepository.save(reservation));
         } catch (IntegrationException e) {
             throw new IntegrationException("An unknown error occurred while saving the room!");
         }
@@ -117,9 +123,17 @@ public class ReservationServiceImpl implements ReservationService {
         try {
             Reservation reservation = optionalReservation.get();
             reservation.setStatus(Status.RESERVED);
-            return ReservationUtils.makeReservationResponse(reservation);
+            return makeReservationResponse(reservation);
         } catch (IntegrationException e) {
             throw new IntegrationException("An unknown error occurred while deleting the reservation!");
         }
+    }
+
+    private String transformLowerCaseToUpperCase(String status) {
+        return status.toUpperCase();
+    }
+
+    private boolean isStatusProvidedValid(String upperCaseStatus) {
+        return Arrays.stream(Status.values()).anyMatch(n -> n.toString().equals(upperCaseStatus));
     }
 }
