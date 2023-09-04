@@ -51,7 +51,7 @@ public class Factory {
 
     public static GuestPhoneNumberRequest createGuestPhoneNumberRequest() {
         return GuestPhoneNumberRequest.builder()
-                .cellPhone("(99) 99999-9999")
+                .cellPhone("99 99999-9999")
                 .email("test@test.com.br")
                 .build();
     }
@@ -69,7 +69,7 @@ public class Factory {
                 .email("test@test.com.br")
                 .numberDaysReserved(3L)
                 .numberRoom(3589)
-                .reservationDate(LocalDate.now())
+                .reservationDate(LocalDate.now().toString())
                 .build();
     }
 
@@ -95,12 +95,6 @@ public class Factory {
                 .guests(3)
                 .number(389)
                 .value(BigDecimal.TEN)
-                .build();
-    }
-
-    public static UpdateRoomRequest createUpdateRoomRequest() {
-        return UpdateRoomRequest.builder()
-                .number(323)
                 .build();
     }
 

@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
-import static br.com.rhitmohospede.enums.Status.AVAILABLE;
 import static br.com.rhitmohospede.factory.Factory.*;
 import static br.com.rhitmohospede.util.JsonResponse.asJsonString;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,13 +19,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ReservationController.class)
 public class ReservationControllerTest {
 
-    static String GUEST_URI = "/api/v1/reservation";
+    static String RESERVATION_URI = "/api/v1/reservation";
 
     @Autowired
     MockMvc mvc;
@@ -39,14 +39,15 @@ public class ReservationControllerTest {
     public void getAllReservationsByStatus() throws Exception {
         var reservationResponse = createReservationResponse();
 
-        given(service.getAllReservationsByStatus(AVAILABLE)).willReturn(List.of(reservationResponse));
+        given(service.getAllReservationsByStatus(anyString())).willReturn(List.of(reservationResponse));
 
         var request = MockMvcRequestBuilders
-                .get(GUEST_URI.concat("/AVAILABLE"))
+                .get(RESERVATION_URI.concat("/status/available"))
                 .accept(APPLICATION_JSON);
 
         mvc.perform(request)
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$[0].code").isNotEmpty())
                 .andExpect(jsonPath("$[0].checkinDate").isNotEmpty())
                 .andExpect(jsonPath("$[0].checkoutDate").isNotEmpty())
@@ -60,11 +61,11 @@ public class ReservationControllerTest {
     public void getAllReservationsByDate() throws Exception {
         var reservationResponse = createReservationResponse();
 
-        given(service.getAllReservationsByDate(LocalDate.now(), LocalDate.now().plusDays(3)))
+        given(service.getAllReservationsByDate(LocalDate.now().toString(), LocalDate.now().plusDays(3).toString()))
                 .willReturn(List.of(reservationResponse));
 
         var request = MockMvcRequestBuilders
-                .get(GUEST_URI.concat("/search/date"))
+                .get(RESERVATION_URI.concat("/search/date"))
                 .param("initialDate", LocalDate.now().toString())
                 .param("finalDate", LocalDate.now().plusDays(3).toString())
                 .accept(APPLICATION_JSON);
@@ -88,7 +89,7 @@ public class ReservationControllerTest {
         given(service.createReservation(reservationRequest)).willReturn(reservationResponse);
 
         var request = MockMvcRequestBuilders
-                .post(GUEST_URI)
+                .post(RESERVATION_URI)
                 .content(asJsonString(reservationRequest))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON);
@@ -112,7 +113,7 @@ public class ReservationControllerTest {
         given(service.reservationPayment(paymentRequest)).willReturn(reservationResponse);
 
         var request = MockMvcRequestBuilders
-                .patch(GUEST_URI.concat("/pay"))
+                .patch(RESERVATION_URI.concat("/pay"))
                 .content(asJsonString(paymentRequest))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON);
@@ -131,7 +132,7 @@ public class ReservationControllerTest {
     @DisplayName("It should delete reservation")
     public void deleteReservation() throws Exception {
         var request = MockMvcRequestBuilders
-                .delete(GUEST_URI.concat("/458"))
+                .delete(RESERVATION_URI.concat("/458"))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON);
 

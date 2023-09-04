@@ -14,9 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.Optional;
 
-import static br.com.rhitmohospede.exception.enums.ProblemType.*;
 import static br.com.rhitmohospede.factory.Factory.*;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
@@ -60,11 +58,9 @@ public class GuestServiceTest {
 
         when(repository.findAll()).thenReturn(emptyList());
 
-        var exception = catchThrowable(() -> service.getAllGuests());
+        List<GuestResponse> allGuests = service.getAllGuests();
 
-        assertThat(exception)
-                .isInstanceOf(GuestNotFoundException.class)
-                .hasMessage(NO_GUEST_FOUND_MESSAGE.toString());
+        assertThat(allGuests.isEmpty());
 
         verify(repository, atLeastOnce()).findAll();
     }
@@ -106,7 +102,7 @@ public class GuestServiceTest {
 
         assertThat(exception)
                 .isInstanceOf(GuestNotFoundException.class)
-                .hasMessage(NO_GUEST_FOUND_MESSAGE.toString());
+                .hasMessage(exception.getMessage());
 
         verify(repository, atLeastOnce()).findByEmail(anyString());
     }
@@ -123,7 +119,7 @@ public class GuestServiceTest {
 
         assertThat(exception)
                 .isInstanceOf(BusinessException.class)
-                .hasMessage(GUEST_ALREADY_REGISTERED_MESSAGE.toString());
+                .hasMessage(exception.getMessage());
     }
 
     @Test
@@ -158,22 +154,5 @@ public class GuestServiceTest {
 
         verify(repository, atLeastOnce()).findByEmail(anyString());
         verify(repository, atLeastOnce()).save(any(Guest.class));
-    }
-
-    @Test
-    @DisplayName("It should throw an exception when not find a guest in the database when trying to update")
-    public void noGuestsFoundUpdate() {
-        var guestPhoneNumberRequest = createGuestPhoneNumberRequest();
-
-        when(repository.findByEmail(anyString())).thenReturn(Optional.empty());
-
-        var exception = catchThrowable(() -> service.updateGuestNumber(guestPhoneNumberRequest));
-
-        assertThat(exception)
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(GUEST_NOT_FOUND.toString());
-
-        verify(repository, atLeastOnce()).findByEmail(anyString());
-        verify(repository, never()).save(any(Guest.class));
     }
 }

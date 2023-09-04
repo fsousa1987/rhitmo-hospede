@@ -2,7 +2,6 @@ package br.com.rhitmohospede.controller;
 
 import br.com.rhitmohospede.enums.Status;
 import br.com.rhitmohospede.request.CreateRoomRequest;
-import br.com.rhitmohospede.request.UpdateRoomRequest;
 import br.com.rhitmohospede.service.RoomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
-import static br.com.rhitmohospede.factory.Factory.*;
+import static br.com.rhitmohospede.factory.Factory.createRoomRequest;
+import static br.com.rhitmohospede.factory.Factory.createRoomResponse;
 import static br.com.rhitmohospede.util.JsonResponse.asJsonString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -43,7 +43,7 @@ public class RoomControllerTest {
     public void findAllRoomsByStatusAvailable() throws Exception {
         var roomResponse = createRoomResponse();
 
-        given(service.findAllRoomByStatus(any(Status.class), any(LocalDate.class), any(LocalDate.class))).willReturn(List.of(roomResponse));
+        given(service.findAllRoomByStatus(any(Status.class))).willReturn(List.of(roomResponse));
 
         var request = MockMvcRequestBuilders
                 .get(ROOM_URI.concat("/available"))
@@ -66,7 +66,7 @@ public class RoomControllerTest {
         var roomResponse = createRoomResponse();
         roomResponse.setStatus(Status.RESERVED);
 
-        given(service.findAllRoomByStatus(any(Status.class), any(LocalDate.class), any(LocalDate.class))).willReturn(List.of(roomResponse));
+        given(service.findAllRoomByStatus(any(Status.class))).willReturn(List.of(roomResponse));
 
         var request = MockMvcRequestBuilders
                 .get(ROOM_URI.concat("/reserved"))
@@ -105,23 +105,6 @@ public class RoomControllerTest {
                 .andExpect(jsonPath("$.status").isNotEmpty())
                 .andExpect(jsonPath("$.description").isNotEmpty())
                 .andExpect(jsonPath("$.dailyValue").isNotEmpty());
-    }
-
-    @Test
-    @DisplayName("It should update a room")
-    public void updateRoom() throws Exception {
-        var updateRoomRequest = createUpdateRoomRequest();
-
-        var request = MockMvcRequestBuilders
-                .patch(ROOM_URI.concat("/update"))
-                .content(asJsonString(updateRoomRequest))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON);
-
-        mvc.perform(request)
-                .andExpect(status().isNoContent());
-
-        verify(service, times(1)).updateRoom(any(UpdateRoomRequest.class));
     }
 
     @Test
