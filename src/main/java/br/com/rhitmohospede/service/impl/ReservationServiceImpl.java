@@ -4,10 +4,7 @@ import br.com.rhitmohospede.entity.Guest;
 import br.com.rhitmohospede.entity.Reservation;
 import br.com.rhitmohospede.entity.Room;
 import br.com.rhitmohospede.enums.Status;
-import br.com.rhitmohospede.exception.BusinessException;
-import br.com.rhitmohospede.exception.IntegrationException;
-import br.com.rhitmohospede.exception.InvalidParamException;
-import br.com.rhitmohospede.exception.InvalidStatusException;
+import br.com.rhitmohospede.exception.*;
 import br.com.rhitmohospede.repository.GuestRepository;
 import br.com.rhitmohospede.repository.ReservationRepository;
 import br.com.rhitmohospede.repository.RoomRepository;
@@ -49,17 +46,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationResponse> getAllReservationsByDate(String initialDate, String finalDate) {
-        Map<String, String> dates = new HashMap<>();
-        dates.put("initialDate", initialDate);
-        dates.put("finalDate", finalDate);
-
-        validateDatesProvided(dates);
+        var dates = createMapOfDates(initialDate, finalDate);
+        iterateToMapDateValues(dates);
 
         LocalDate initialDateParam = LocalDate.parse(initialDate);
         LocalDate finalDateParam = LocalDate.parse(finalDate);
 
         if (initialDateParam.isAfter(finalDateParam) || finalDateParam.isBefore(initialDateParam)) {
-            throw new InvalidParamException(String.format("Divergence between dates: initialDate: %s and finalDate: %s",
+            throw new InvalidDateException(String.format("Divergence between dates: initialDate: %s and finalDate: %s",
                     initialDate, finalDate));
         }
 
@@ -75,73 +69,81 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public ReservationResponse createReservation(CreateReservationRequest createReservationRequest) {
+        validateDateProvided(createReservationRequest.getReservationDate());
+        LocalDate reservationDate = LocalDate.parse(createReservationRequest.getReservationDate());
 
-        Optional<Guest> optionalGuest = guestRepository.findByEmail(createReservationRequest.getEmail());
-        if (optionalGuest.isEmpty()) {
-            throw new BusinessException("No guest found with these parameters");
+        var guest = findGuestByEmail(createReservationRequest.getEmail());
+        var reservations = reservationRepository.findByGuestAndReservationDate(guest, reservationDate);
+
+        if (!reservations.isEmpty()) {
+            throw new BusinessException("You already have a reservation for that date");
         }
 
-        Optional<Reservation> optionalReservation = reservationRepository.findByGuestAndReservationDate(optionalGuest.get(), createReservationRequest.getReservationDate());
-        if (optionalReservation.isPresent()) {
-            throw new BusinessException("You already have a reservation for that date!");
-        }
-
-        Optional<Reservation> reserved = reservationRepository.findByReservationDateAndRoomReserved(createReservationRequest.getReservationDate(), createReservationRequest.getNumberRoom());
-        if (reserved.isPresent()) {
-            throw new BusinessException("There is already a reservation for this date!");
-        }
-
-        Optional<Room> optionalRoom = roomRepository.findByNumber(createReservationRequest.getNumberRoom());
+        var optionalRoom = roomRepository.findByNumber(createReservationRequest.getNumberRoom());
         if (optionalRoom.isEmpty()) {
-            throw new BusinessException("No rooms found with these parameters");
+            throw new RoomNotFoundException("Room not found in database");
+        }
+
+        Room room = optionalRoom.get();
+
+        if (room.getStatus().equals(Status.PRE_BOOKING) || room.getStatus().equals(Status.RESERVED)) {
+            throw new BusinessException("Room already taken or in PRE_BOOKING");
         }
 
         var reservationCode = gerarCodigo();
 
-        Reservation reservation = new Reservation();
+        var reservation = new Reservation();
         reservation.setCode(reservationRepository.existsByCode(reservationCode) ? gerarCodigo() : reservationCode);
-        reservation.setReservationDate(createReservationRequest.getReservationDate());
-        reservation.setDataCheckin(createReservationRequest.getReservationDate());
-        reservation.setDataCheckout(createReservationRequest.getReservationDate().plusDays(createReservationRequest.getNumberDaysReserved()));
+        reservation.setReservationDate(reservationDate);
+        reservation.setDataCheckin(reservationDate);
+        reservation.setDataCheckout(reservationDate.plusDays(createReservationRequest.getNumberDaysReserved()));
         reservation.setRoomReserved(createReservationRequest.getNumberRoom());
         reservation.setStatus(Status.PRE_BOOKING);
-        reservation.setGuest(optionalGuest.get());
+        reservation.setGuest(guest);
         reservation.setTotalValue(calculateTotalValue(optionalRoom.get(), createReservationRequest.getNumberDaysReserved()));
+        optionalRoom.get().setStatus(Status.PRE_BOOKING);
         reservation.setRoom(optionalRoom.get());
-        try {
-            return makeReservationResponse(reservationRepository.save(reservation));
-        } catch (IntegrationException e) {
-            throw new IntegrationException("An unknown error occurred while saving the room!");
-        }
+
+        return makeReservationResponse(reservationRepository.save(reservation));
     }
 
     @Transactional
     @Override
     public void deleteReservation(String code) {
-        Optional<Reservation> optionalReservation = reservationRepository.findByCode(code);
+        var optionalReservation = reservationRepository.findByCode(code);
         if (optionalReservation.isEmpty()) {
-            throw new BusinessException("No reservations found!");
+            throw new ReservationNotFoundException("No reservations found!");
         }
-        try {
+        var room = roomRepository.findByNumber(optionalReservation.get().getRoom().getNumber());
+
+        if (room.isPresent()) {
             reservationRepository.delete(optionalReservation.get());
-        } catch (IntegrationException e) {
-            throw new IntegrationException("An unknown error occurred while deleting the reservation!");
+            room.get().setStatus(Status.AVAILABLE);
+            roomRepository.saveAndFlush(room.get());
         }
     }
 
     @Override
     public ReservationResponse reservationPayment(PaymentRequest paymentRequest) {
-        Optional<Reservation> optionalReservation = reservationRepository.findByCode(paymentRequest.getCode());
+        var optionalReservation = reservationRepository.findByCode(paymentRequest.getCode());
         if (optionalReservation.isEmpty()) {
-            throw new BusinessException("No reservations found!");
+            throw new ReservationNotFoundException("No reservations found!");
         }
-        try {
-            Reservation reservation = optionalReservation.get();
+
+        var reservation = optionalReservation.get();
+        if (!reservation.getStatus().equals(Status.PRE_BOOKING)) {
+            throw new BusinessException("The reservation status is not PRE_BOOKING");
+        }
+        var room = roomRepository.findByNumber(optionalReservation.get().getRoom().getNumber());
+
+        if (room.isPresent()) {
             reservation.setStatus(Status.RESERVED);
-            return makeReservationResponse(reservation);
-        } catch (IntegrationException e) {
-            throw new IntegrationException("An unknown error occurred while deleting the reservation!");
+            reservationRepository.save(reservation);
+
+            room.get().setStatus(Status.RESERVED);
+            roomRepository.save(room.get());
         }
+        return makeReservationResponse(reservation);
     }
 
     private String transformLowerCaseToUpperCase(String status) {
@@ -152,18 +154,37 @@ public class ReservationServiceImpl implements ReservationService {
         return Arrays.stream(Status.values()).anyMatch(status -> status.toString().equals(upperCaseStatus));
     }
 
-    private void validateDatesProvided(Map<String, String> dateMap) {
+    private void validateDateProvided(String dateValue) {
         String datePattern = "yyyy-MM-dd";
 
         SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
 
-        dateMap.forEach((key, value) -> {
-            try {
-                sdf.setLenient(false);
-                sdf.parse(value);
-            } catch (ParseException e) {
-                throw new InvalidParamException("Invalid date param provided");
-            }
-        });
+        try {
+            sdf.setLenient(false);
+            sdf.parse(dateValue);
+        } catch (ParseException e) {
+            throw new InvalidDateException("Invalid date param or date field provided");
+        }
+    }
+
+    private Map<String, String> createMapOfDates(String initialDate, String finalDate) {
+        Map<String, String> dates = new HashMap<>();
+        dates.put("initialDate", initialDate);
+        dates.put("finalDate", finalDate);
+        return dates;
+    }
+
+    private void iterateToMapDateValues(Map<String, String> dates) {
+        dates.forEach((key, value) -> validateDateProvided(value));
+    }
+
+    private Guest findGuestByEmail(String email) {
+        var optionalGuest = guestRepository.findByEmail(email);
+
+        if (optionalGuest.isEmpty()) {
+            throw new GuestNotFoundException("Guest not found in database");
+        }
+
+        return optionalGuest.get();
     }
 }

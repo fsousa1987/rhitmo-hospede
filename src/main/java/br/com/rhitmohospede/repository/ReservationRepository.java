@@ -26,7 +26,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findAllByRoomReserved(int number);
 
-    Optional<Reservation> findByGuestAndReservationDate(Guest guest, LocalDate reservationDate);
+    List<Reservation> findByGuestAndReservationDate(Guest guest, LocalDate reservationDate);
 
     Optional<Reservation> findByReservationDateAndRoomReserved(LocalDate reservationDate, int number);
 

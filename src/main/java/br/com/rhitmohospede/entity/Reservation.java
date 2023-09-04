@@ -52,7 +52,7 @@ public class Reservation implements Serializable {
     @Column(name = "total_value")
     private BigDecimal totalValue;
 
-    @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne
     private Room room;
 
     @Column(name = "room_reserved")

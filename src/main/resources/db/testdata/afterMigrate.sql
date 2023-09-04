@@ -51,20 +51,20 @@ VALUES (4, 'Gabriele dos Santos', 'gabriele@yahoo.com', '99 99999-9999');
 
 INSERT INTO tb_reservation(code, reservation_date, checkin_date, checkout_date, total_value, room_id, room_reserved,
                            days_reserved, status, guest_id)
-VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5932', '2023-09-03', '2023-09-05', '2023-09-08', 458, 1, 356, 3, 'RESERVED',
+VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5932', '2023-09-03', '2023-09-05', '2023-09-08', 458, 1, 356, 3, 'AVAILABLE',
         1);
 
 INSERT INTO tb_reservation(code, reservation_date, checkin_date, checkout_date, total_value, room_id, room_reserved,
                            days_reserved, status, guest_id)
-VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5933', '2023-09-03', '2023-09-05', '2023-09-08', 458, 2, 356, 3, 'RESERVED',
+VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5933', '2023-09-03', '2023-09-05', '2023-09-08', 558, 2, 448, 3, 'RESERVED',
         1);
 
 INSERT INTO tb_reservation(code, reservation_date, checkin_date, checkout_date, total_value, room_id, room_reserved,
                            days_reserved, status, guest_id)
-VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5934', '2023-09-03', '2023-09-05', '2023-09-08', 458, 3, 356, 3, 'RESERVED',
+VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5934', '2023-09-03', '2023-09-05', '2023-09-08', 1587, 3, 377, 3, 'PRE_BOOKING',
         2);
 
 INSERT INTO tb_reservation(code, reservation_date, checkin_date, checkout_date, total_value, room_id, room_reserved,
                            days_reserved, status, guest_id)
-VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5935', '2023-09-03', '2023-09-05', '2023-09-08', 458, 4, 356, 3, 'RESERVED',
+VALUES ('0bad13fc-e6a2-4f38-8fe7-4f6b2afa5935', '2023-09-03', '2023-09-05', '2023-09-08', 3258, 4, 698, 3, 'AVAILABLE',
         3);

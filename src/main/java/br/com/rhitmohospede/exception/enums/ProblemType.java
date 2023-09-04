@@ -9,7 +9,7 @@ public enum ProblemType {
     INVALID_STATUS_PROVIDED("Invalid status provided"),
     INVALID_DATA("Invalid data"),
     BUSINESS_ERROR("Business rule violation"),
-    INVALID_PARAM("Invalid param");
+    INVALID_DATE("Invalid date");
 
     private final String title;
 

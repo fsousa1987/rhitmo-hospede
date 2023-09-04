@@ -11,5 +11,10 @@ CREATE TABLE tb_reservation
     days_reserved    INT,
     status           ENUM ('ACTIVE_BOOKING', 'PRE_BOOKING', 'BOOKING_CANCELED', 'AVAILABLE', 'RESERVED', 'CLEANING') NOT NULL,
     guest_id         BIGINT
-) engine = InnoDB
-  default charset = utf8;
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+ALTER TABLE tb_reservation
+    ADD CONSTRAINT fk_room_id FOREIGN KEY (room_id) REFERENCES tb_room (id);
+ALTER TABLE tb_reservation
+    ADD CONSTRAINT fk_guest_id FOREIGN KEY (guest_id) REFERENCES tb_guest (id);

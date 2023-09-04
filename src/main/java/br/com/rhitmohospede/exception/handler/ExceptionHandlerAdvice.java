@@ -1,9 +1,6 @@
 package br.com.rhitmohospede.exception.handler;
 
-import br.com.rhitmohospede.exception.BusinessException;
-import br.com.rhitmohospede.exception.GuestNotFoundException;
-import br.com.rhitmohospede.exception.InvalidParamException;
-import br.com.rhitmohospede.exception.InvalidStatusException;
+import br.com.rhitmohospede.exception.*;
 import br.com.rhitmohospede.exception.enums.ProblemType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -76,11 +73,35 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
-    @ExceptionHandler(InvalidParamException.class)
-    public ResponseEntity<?> handleInvalidParamException(InvalidParamException ex, WebRequest request) {
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<?> handleInvalidDateException(InvalidDateException ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ProblemType problemType = ProblemType.INVALID_PARAM;
+        ProblemType problemType = ProblemType.INVALID_DATE;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<?> handleRoomNotFoundException(RoomNotFoundException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
+        String detail = ex.getMessage();
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(ReservationNotFoundException.class)
+    public ResponseEntity<?> handleReservationException(ReservationNotFoundException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail).build();
